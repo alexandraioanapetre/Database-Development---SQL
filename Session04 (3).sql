@@ -60,4 +60,12 @@ Order by TotalQty
 
 --Sa se afiseze categoria produsului vandut in cea mai mare cantitate:
 
-Select top 1	c.categoryname, SUM(od.qty) as QuantityFrom Sales.OrderDetails odJoin Production.Products p	on od.productid = p.productidJoin Production.Categories c	on c.categoryid = p.categoryidGroup by c.categoryname, p.productidOrder by Quantity desc
+Select top 1
+	c.categoryname, SUM(od.qty) as Quantity
+From Sales.OrderDetails od
+Join Production.Products p
+	on od.productid = p.productid
+Join Production.Categories c
+	on c.categoryid = p.categoryid
+Group by c.categoryname, p.productid
+Order by Quantity desc
