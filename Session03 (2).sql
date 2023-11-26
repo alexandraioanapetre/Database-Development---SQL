@@ -1,32 +1,63 @@
-create database DemoDB;
-use DemoDB;
-create table movie(
-	id int primary key not null,
-	title varchar(100) not null,
-	releaseyear int null,
-	category varchar(100) null,
-	rating dec(4,2)
-	);
+--Sa se afiseze toti clientii care au cel putin o comanda:
 
-insert into movie(id, title, releaseyear,category,rating)
-values (1,'The Godfather',1972,'Drama',9.2);
+Select distinct 
+c.companyname
+FROM
+    Sales.Customers c
+JOIN
+    Sales.Orders o ON c.custid = o.custid;
 
-insert into movie(id, title, releaseyear,category,rating)
-values (2,'The Dark Knight',2008,'Action',9.0);
+--Sa se afiseze clientii care nu au nici o comanda:
 
-insert into movie(id, title, releaseyear,category,rating)
-values (3,'The Lord of the Rings',2003,'Action',9.0);
+Select c.companyname
+FROM
+    Sales.Customers c
+Left Join
+    Sales.Orders o 
+	ON c.custid = o.custid
+Where o.orderid is null
 
-insert into movie(id, title, releaseyear,category,rating)
-values (4,'Pulp Fiction',1994,'Drama',8.2);
+--Sa se afiseze numele companiilor si pentru cele care au comenzi, numarul de comenzi:
 
-insert into movie(id, title, releaseyear,category,rating)
-values (5,'Fight Club',1999,'Drama',8.8);
+SELECT
+    c.companyname,
+    COUNT(o.orderid) AS NumberOfOrders
+FROM
+    Sales.Customers c
+Left Join Sales.Orders o
+   ON c.custid = o.custid
+GROUP BY c.CompanyName
 
-insert into movie(id, title, releaseyear,category,rating)
-values (6,'Inception',2010,'Action',8.8);
+--Obs: left aduce toti clientii. daca puneam inner ii obtineam doar pe cei care au comenzi.
 
-select
-category, count(distinct rating)
-from movie
-group by category;
+--Sa se afiseze numele companiilor (toate) si unde este cazul numarul total de produse comandate:
+
+Select
+    c.companyname,
+    SUM(od.qty) as TotalQty
+From
+    Sales.Customers c
+Left Join
+    Sales.Orders o on c.custid = o.custid
+Left Join
+    Sales.OrderDetails od on od.orderid = o.orderid
+Group by
+    c.CompanyName;
+
+ --
+Select
+    c.companyname,
+    AVG(od.qty) as TotalQty
+From
+    Sales.Customers c
+Left Join
+    Sales.Orders o on c.custid = o.custid
+Left Join
+    Sales.OrderDetails od on od.orderid = o.orderid
+Group by
+    c.CompanyName
+Order by TotalQty
+
+--Sa se afiseze categoria produsului vandut in cea mai mare cantitate:
+
+Select top 1	c.categoryname, SUM(od.qty) as QuantityFrom Sales.OrderDetails odJoin Production.Products p	on od.productid = p.productidJoin Production.Categories c	on c.categoryid = p.categoryidGroup by c.categoryname, p.productidOrder by Quantity desc
